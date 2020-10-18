@@ -1,24 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Button, makeStyles } from "@material-ui/core";
+import React, { useState } from "react";
+import "./App.css";
+
+const useStyles = makeStyles({
+  button: {
+    backgroundColor: "purple",
+    color: "yellow",
+  },
+});
+
+const API_URL =
+  "https://official-joke-api.appspot.com/random_joke";
 
 function App() {
+  const [joke, setJoke] = useState({
+    // text: "Here Goes the joke",
+    question: "",
+    answer: "",
+    type: "",
+  });
+  const classes = useStyles();
+
+  const changeJoke = () => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        setJoke({
+          question: `- ${data.setup}`,
+          answer: `- ${data.punchline}`,
+          type: data.type,
+        });
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className="app">
+      <div className="container">
+        <h1>Jokes Generator</h1>
+        <div className="app__jokeTypeContainer">
+          <p>Joke Type: </p>
+          <b>
+            <i>{joke.type}</i>
+          </b>
+        </div>
+        <div className="app__jokeContainer">
+          <p>{joke.question}</p>
+          <p>{joke.answer}</p>
+        </div>
+        <Button
+          onClick={changeJoke}
+          className={classes.button}
         >
-          Learn React
-        </a>
-      </header>
+          Generate Joke 😂
+        </Button>
+      </div>
     </div>
   );
 }
